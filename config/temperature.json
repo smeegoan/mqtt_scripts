@@ -1,0 +1,13 @@
+{
+    "unit_of_measurement": "ºC",
+    "icon": "mdi:thermometer",
+    "state_topic": "%TOPIC%",
+    "name": "%DEVICE% Temperature",
+    "unique_id": "%DEVICE%_%SENSOR%",
+    "device": {
+      "identifiers": [
+        "%DEVICE%"
+      ],
+      "name": "%DEVICE%"
+      }
+  }

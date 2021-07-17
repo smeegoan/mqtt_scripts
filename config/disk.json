@@ -1,0 +1,13 @@
+{
+  "unit_of_measurement": "%",
+  "icon": "mdi:harddisk",
+  "state_topic": "%TOPIC%",
+  "name": "%DEVICE% Disk Usage",
+  "unique_id": "%DEVICE%_%SENSOR%",
+  "device": {
+    "identifiers": [
+      "%DEVICE%"
+    ],
+    "name": "%DEVICE%"
+    }
+}
