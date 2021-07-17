@@ -45,31 +45,31 @@ def get_disk_space():
         if i==2:
             return(line.split()[1:5])
 
-def publish_config(topic, device, sensor, file):
+def publish_config(client, topic, device, sensor, file):
     f = open (file, "r")
     config= json.dumps(json.load(f)).replace("%TOPIC%",topic).replace("%DEVICE%",device).replace("%SENSOR%",sensor)
-    publish_message("homeassistant/sensor/"+device+"/"+sensor+"/config", config)
+    publish_message(client, "homeassistant/sensor/"+device+"/"+sensor+"/config", config)
 
-def publish_message(topic, message):
-    client = mqtt.Client(client_id="NUC")
+def publish_message(client, topic, message):
     client.username_pw_set(config.user,config.password)
     client.connect(config.server)
     print("Publishing to MQTT topic: " + topic)
     print("Message: " + message)
-    client.publish(topic,message, qos=0, retain=False)
+    client.publish(topic, message, qos=0, retain=False)
     
 def publish_all(device, topicPrefix, isPi):    
-    publish_config(topicPrefix+"stats/memory/usage", device, "memory", "config/memory.json")
-    publish_config(topicPrefix+"stats/disk/usage", device, "disk", "config/disk.json")
-    publish_config(topicPrefix+"stats/cpu/usage", device, "cpu", "config/cpu.json")
-    publish_config(topicPrefix+"stats/cpu/temperature", device, "temperature", "config/temperature.json")
+    client = mqtt.Client(client_id="NUC")
+    publish_config(client, topicPrefix+"stats/memory/usage", device, "memory", "config/memory.json")
+    publish_config(client, topicPrefix+"stats/disk/usage", device, "disk", "config/disk.json")
+    publish_config(client, topicPrefix+"stats/cpu/usage", device, "cpu", "config/cpu.json")
+    publish_config(client, topicPrefix+"stats/cpu/temperature", device, "temperature", "config/temperature.json")
     
     
     # CPU informatiom
     CPU_temp = get_pi_cpu_temperature() if isPi else get_cpu_temperature()
     CPU_usage = getCPUuse()
-    publish_message(topicPrefix+"stats/cpu/usage", CPU_usage)
-    publish_message(topicPrefix+"stats/cpu/temperature", CPU_temp)
+    publish_message(client, topicPrefix+"stats/cpu/usage", CPU_usage)
+    publish_message(client, topicPrefix+"stats/cpu/temperature", CPU_temp)
 
     # RAM information
     # Output is in kb, here I convert it in Mb for readability
@@ -78,12 +78,13 @@ def publish_all(device, topicPrefix, isPi):
     RAM_used = round(int(RAM_stats[1]) / 1000,1)
     #RAM_free = round(int(RAM_stats[2]) / 1000,1)
     RAM_used_percent=str(round(RAM_used*100/RAM_total,2))
-    publish_message(topicPrefix+"stats/memory/usage", RAM_used_percent)
+    publish_message(client, topicPrefix+"stats/memory/usage", RAM_used_percent)
 
     # Disk information
     DISK_stats = get_disk_space()
     #DISK_total = DISK_stats[0]
     #DISK_free = DISK_stats[1]
     DISK_perc = DISK_stats[3]
-    publish_message(topicPrefix+"stats/disk/usage", DISK_perc[:-1])
+    publish_message(client, topicPrefix+"stats/disk/usage", DISK_perc[:-1])
+    client.disconnect()
 
