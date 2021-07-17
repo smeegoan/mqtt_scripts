@@ -1,11 +1,10 @@
 from crontab import CronTab
 
-cron = CronTab()
+cron = CronTab(user='root')
 
 job = cron.new(command='python3 rpi3b_mqtt.py', comment='rpi3b_mqtt')
-job.minute.every(5)
+job.minute.every(1)
 
 cron.write()
 
-print job.enable()
-print job.enable(False)
+job.enable()
