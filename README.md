@@ -1,4 +1,4 @@
-# Mqtt Scripts
+# MQTT Scripts
 Scripts that publish Hardware Info (Raspberry PI3B. Raspberry PI4 and NUC) into MQTT that can be consumed by Home Assistant
 
 Installation
